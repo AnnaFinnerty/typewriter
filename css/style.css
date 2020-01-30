@@ -1,0 +1,56 @@
+
+body{
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    font-family: 'Special Elite', 'Courier',serif;
+    /* background: rgb(253, 245, 245) */
+    background: radial-gradient(rgb(92, 1, 92),rgb(92, 1, 92),rgb(92, 1, 92) ,rgb(35, 2, 38)); 
+    /* box-shadow: inset 0px 0px 8px 5px rgb(35, 2, 38); */
+}
+
+header{
+    width: 100vw;
+    display: inline-flex;
+    text-align: center;
+    position: fixed;
+}
+
+h1{
+    font-family: 'Rock Salt', cursive;
+    width: 40vw;
+    text-align: center;
+    margin: 0;
+    /* color: rgb(59, 78, 20); */
+    
+    color: rgb(97, 133, 27);
+}
+
+.inline-flex-center{
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+}
+
+#typewriter{
+    margin: 0 auto;
+    width: 70vw;
+    height: 70%;
+}
+
+.hidden{
+    display: none;
+}
+
+.icon{
+    font-size: 5vw;
+    color: white;
+    padding: 1vw;
+    margin: 1vw;
+}
+
+.icon:hover{
+    color:gray;
+}
