@@ -24,6 +24,8 @@ class Typewriter{
         //find keysObjs and hammerObjs in svg and store ref and position calc in keys obj
         for(let i = 0; i < activeKeys.length; i++){
             const keyObj = this.typewriter.getElementById(activeKeys[i]+"-key");
+            console.log(activeKeys[i]);
+            console.log(keyObj);
             this.keys[activeKeys[i]] = {};
             this.keys[activeKeys[i]]['obj'] = keyObj;
             const transform = keyObj.getAttribute("transform").split(",");
@@ -55,7 +57,6 @@ class Typewriter{
             const textObj = this.typewriter.getElementById('text'+i).firstChild;
             //remove filler content (not need for code but useful for SVG placement)
             textObj.textContent = "";
-            console.log(textObj);
             textObj.style.fontFamily = "'Special Elite', 'Courier',serif";
             textObj.style.textSize = "12px";
             textObj.style.fill = "black";
@@ -75,11 +76,12 @@ class Typewriter{
     }
     type = (key,time) => {
         //MTC use time to play sound
+        this.currentText += key;
+        this.print(this.currentText);
         this.audio.type(time);
         if(this.currentChar - 1 <= this.maxChars){
             this.currentChar += 1;
             this.currentPos -= this.charWidth;
-            this.currentText += key;
             this.depressKey(key);
             this.print(this.currentText);
         } else {
@@ -101,7 +103,6 @@ class Typewriter{
             //check for the hammer
             if(this.hammers[key]){
                 hammerObj = this.hammers[key]['obj'];
-                console.log(hammerObj);
                 if(hammerObj){
                     hammerObj.style.opacity = 0;
                 }
@@ -126,6 +127,7 @@ class Typewriter{
         
     }
     nextLine = () => {
+        console.log('net line:',this.currentText)
         this.audio.ding();
         this.currentPos = this.paperMin;
         this.movableOnType.style.transform = "translate("+this.currentPos+"px,0)";
@@ -136,7 +138,6 @@ class Typewriter{
             this.nextPage();
         } else {
             this.currentLine += 1;
-            this.print(this.currentText);
             this.paper.style.transform = " translate("+0+"px,"+-8*(this.currentLine)+"px)";
         }
     }
@@ -149,7 +150,6 @@ class Typewriter{
         }
     }
     tab = (timeSinceLastKeyStroke) => {
-        console.log('tabbbinnnggg');
         this.currentText += "   ";
         this.depressKey('tab');
         this.currentChar += 3;

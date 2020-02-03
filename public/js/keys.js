@@ -1,5 +1,5 @@
-const activeKeys = [ 'enter','z','x','c','v','b','n','m',
+const activeKeys = [  'enter','z','x','c','v','b','n','m',
                     'a','s','d','f','g','h','j','k','l',
                     'tab','q','w','e','r','t','y','u','i','o','p',
-                    '1'    
+                    '1','2','3','4','5','6','7','8','9'    
                 ];

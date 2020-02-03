@@ -31,10 +31,7 @@ class Input{
             this.userInput(e.key)
         })
         for(let i = 0; i < activeKeys.length; i++){
-            const key = this.typewriter.getElementById(activeKeys[i]+"-key");
-            console.log(activeKeys[i]);
-            console.log(key);
-            
+            const key = this.typewriter.getElementById(activeKeys[i]+"-key"); 
             key.addEventListener('click',(e)=>{
                 this.clickInput(e.target.id)
             })
