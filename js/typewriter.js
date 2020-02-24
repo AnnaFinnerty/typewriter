@@ -18,7 +18,9 @@ class Typewriter{
         this.maxLinesOnPages = 15;
         this.keys = {}
         this.hammers = {}
-        this.textLines = []
+        this.textLines = [];
+        this.autoTypeInterval = null;
+        this.isAutoTyping = false;
         this.awake();
     }
     awake(){
@@ -43,18 +45,10 @@ class Typewriter{
                 console.log(targetObj)
                 const keyX = Number(keyObj.getAttribute("x"));
                 const keyY = Number(keyObj.getAttribute("y"));
-                // const keyY = Number(transform[1].split(")")[0]);
-                // this.keys[activeKeys[i]]['pos'] = {
-                //     x: keyX,
-                //     y: keyY
-                // }
             }
             
             try{
                 const hammerObj = this.typewriter.getElementById(activeKeys[i]+"-hammer");
-                // if(hammerObj){
-                //     console.log(hammerObj);
-                // }
                 this.hammers[activeKeys[i]] = {};
                 this.hammers[activeKeys[i]]['obj'] = hammerObj;
                 const hTransform = hammerObj.getAttribute("transform").split(",");
@@ -94,15 +88,15 @@ class Typewriter{
         this.autoType("ttype to start");
     }
     autoType = (message) => {
+        this.isAutoTyping = true;
         const messageLen = message.length;
         let counter = 0;
-        const interval = setInterval(()=>{
+        this.autoTypeInterval = setInterval(()=>{
             if(counter < messageLen - 1){
                 counter++;
                 this.type(message[counter]);
             } else {
-                clearInterval(interval);
-                this.nextPage();
+                this.clearAutoType();
             }
         },500)
     }
@@ -162,7 +156,8 @@ class Typewriter{
         
     }
     nextLine = () => {
-        console.log('net line:',this.currentText)
+        console.log('next line:',this.currentText);
+        this.clearAutoType();
         this.audio.ding();
         const textOffset = this.currentPos * this.charWidth;
         this.currentPos = this.paperMin;
@@ -171,6 +166,8 @@ class Typewriter{
         this.currentPage.push(this.currentText);
         this.currentText = "";
         if(this.currentLine + 1 >= this.maxLinesOnPages){
+            this.paper.style.transform = "translate(0px,"+-8*(this.currentLine)+"px)";
+            this.currentLine = 0;
             this.nextPage();
         } else {
             this.currentLine += 1;
@@ -179,14 +176,17 @@ class Typewriter{
     }
     nextPage = () => {
         console.log('next page!');
-        this.audio.zip();
-        this.currentLine = 0;
+        this.currentChar = 0;
+        this.currentPos = this.paperMin;
+        this.clearAutoType();
+        this.audio.zip(); 
         for(let i = 0; i < this.textLines.length; i++){
             this.textLines[i].textContent = "";
         }
         this.nextLine();
     }
     tab = (timeSinceLastKeyStroke) => {
+        this.clearAutoType();
         this.currentText += "   ";
         this.depressKey('tab');
         this.currentChar += 3;
@@ -197,5 +197,13 @@ class Typewriter{
         //select active text container
         const textContainer = this.textLines[this.currentLine];
         textContainer.textContent = text;
+    }
+    clearAutoType = () => {
+        if(this.isAutoTyping){
+            clearInterval(this.autoTypeInterval)
+            this.isAutoTyping = false;
+            this.autoTypeInterval = null;
+            this.nextPage();
+        }
     }
 }
