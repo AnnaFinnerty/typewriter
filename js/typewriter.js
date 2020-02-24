@@ -28,8 +28,6 @@ class Typewriter{
         //find keysObjs and hammerObjs in svg and store ref and position calc in keys obj
         for(let i = 0; i < activeKeys.length; i++){
             const keyObj = this.typewriter.getElementById(activeKeys[i]+"-key");
-            console.log(activeKeys[i]);
-            console.log(keyObj);
             this.keys[activeKeys[i]] = {};
             this.keys[activeKeys[i]]['obj'] = keyObj;
             if(activeKeys[i].length === 1){
@@ -40,12 +38,7 @@ class Typewriter{
                     x: keyX,
                     y: keyY
                 }
-            } else {
-                const targetObj = this.typewriter.getElementById(activeKeys[i]+"-target");
-                console.log(targetObj)
-                const keyX = Number(keyObj.getAttribute("x"));
-                const keyY = Number(keyObj.getAttribute("y"));
-            }
+            } 
             
             try{
                 const hammerObj = this.typewriter.getElementById(activeKeys[i]+"-hammer");
@@ -136,9 +129,7 @@ class Typewriter{
                     hammerObj.style.opacity = 0;
                 }
                 
-            } else {
-                console.log('hammerobj not fount')
-            }
+            } 
             //offset key
             keyObj.style.transform = "translate("+keyPos.x+"px,"+offsetY+"px)";
             this.ribbon.style.opacity = 1;
@@ -150,13 +141,10 @@ class Typewriter{
                     hammerObj.style.opacity = 1;
                 }
             },100)
-        } else {
-            console.log('keyObj not found');
-        }
+        } 
         
     }
     nextLine = () => {
-        console.log('next line:',this.currentText);
         this.clearAutoType();
         this.audio.ding();
         const textOffset = this.currentPos * this.charWidth;
@@ -175,7 +163,6 @@ class Typewriter{
         }
     }
     nextPage = () => {
-        console.log('next page!');
         this.currentChar = 0;
         this.currentPos = this.paperMin;
         this.clearAutoType();

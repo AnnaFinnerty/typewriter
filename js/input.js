@@ -10,6 +10,7 @@ class Input{
         this.specialKeys = {
             'Enter' : this.enter,
             'Shift' : this.shift,
+            'CapsLock': this.shift,
             'Space' : this.space,
             'Tab': this.tab,
             'Escape': this.escape,
@@ -21,7 +22,7 @@ class Input{
             'ArrowUp': this.rerouteKeyVal,
             'ArrowDown': this.rerouteKeyVal,
             'Meta': this.rerouteKeyVal,
-            'CapsLock': this.rerouteKeyVal
+            
         }
         this.shift = false;
         this.awake();
@@ -40,11 +41,6 @@ class Input{
             })
         }
     }
-    // startTimer = () => {
-    //     this.interval = setInterval(()=>{
-    //         this.timeSinceLastKeyStroke += 1;
-    //     },100)
-    // }
     clickInput = (id) => {
         const key = id.split('-')[0];
         this.userInput(key);
@@ -52,7 +48,6 @@ class Input{
     userInput = (key) => {
         this.timeSinceLastKeyStroke = 0;
         if(this.specialKeys[key]){
-            console.log('this is a special key!');
             const f = this.specialKeys[key];
             f(key)
         } else {
@@ -69,7 +64,6 @@ class Input{
         this.depressKey('enter');
     }
     space = () => {
-        console.log('space')
         this.addToTextString(" ",this.timeSinceLastKeyStroke);
         this.depressKey('space');
     }
@@ -82,7 +76,5 @@ class Input{
     escape = () => {
         this.nextPage();
      }
-    rerouteKeyVal = (key) => {
-        console.log('rerouting key val!' + key);
-    }
+    rerouteKeyVal = (key) => {}
 }
