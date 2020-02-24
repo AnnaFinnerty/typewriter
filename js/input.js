@@ -1,16 +1,18 @@
 class Input{
-    constructor(addToTextString,nextLine,depressKey,tab){
+    constructor(addToTextString,nextLine,depressKey,tab,nextPage){
         //index of keyboard keys that create an action -- everything else gets passed to text
         this.addToTextString = addToTextString;
         this.nextLine = nextLine;
         this.depressKey = depressKey;
         this.tab = tab;
+        this.nextPage = nextPage;
         this.timeSinceLastKeyStroke = 1000;
         this.specialKeys = {
             'Enter' : this.enter,
             'Shift' : this.shift,
             'Space' : this.space,
             'Tab': this.tab,
+            'Escape': this.escape,
             'Control': this.rerouteKeyVal,
             'Alt': this.rerouteKeyVal,
             'Backspace': this.rerouteKeyVal,
@@ -31,20 +33,17 @@ class Input{
             this.userInput(e.key)
         })
         for(let i = 0; i < activeKeys.length; i++){
-            const key = this.typewriter.getElementById(activeKeys[i]+"-key");
-            console.log(activeKeys[i]);
-            console.log(key);
-            
+            const key = this.typewriter.getElementById(activeKeys[i]+"-key"); 
             key.addEventListener('click',(e)=>{
                 this.clickInput(e.target.id)
             })
         }
     }
-    startTimer = () => {
-        this.interval = setInterval(()=>{
-            this.timeSinceLastKeyStroke += 1;
-        },100)
-    }
+    // startTimer = () => {
+    //     this.interval = setInterval(()=>{
+    //         this.timeSinceLastKeyStroke += 1;
+    //     },100)
+    // }
     clickInput = (id) => {
         const key = id.split('-')[0];
         this.userInput(key);
@@ -79,6 +78,9 @@ class Input{
     shift = () => {
        this.shift = true;
     }
+    escape = () => {
+        this.nextPage();
+     }
     rerouteKeyVal = (key) => {
         console.log('rerouting key val!' + key);
     }

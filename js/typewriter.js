@@ -1,6 +1,6 @@
 class Typewriter{
     constructor(){
-        this.input = new Input(this.type,this.nextLine,this.depressKey,this.tab);
+        this.input = new Input(this.type,this.nextLine,this.depressKey,this.tab,this.nextPage);
         this.audio = new Audio(); 
         this.typewriter = document.getElementById('typewriter').getSVGDocument();
         this.charWidth = 5;
@@ -9,6 +9,7 @@ class Typewriter{
         this.movableOnType = this.typewriter.getElementById('layer18');
         this.paper = this.typewriter.getElementById('paper');
         this.ribbon = this.typewriter.getElementById('ribbon');
+        this.handle = this.typewriter.getElementById('handle');
         this.currentText = "";
         this.currentLine = 0;
         this.currentChar = 0;
@@ -21,18 +22,34 @@ class Typewriter{
         this.awake();
     }
     awake(){
+        this.handle.addEventListener('click',()=>this.nextPage())
         //find keysObjs and hammerObjs in svg and store ref and position calc in keys obj
         for(let i = 0; i < activeKeys.length; i++){
             const keyObj = this.typewriter.getElementById(activeKeys[i]+"-key");
+            console.log(activeKeys[i]);
+            console.log(keyObj);
             this.keys[activeKeys[i]] = {};
             this.keys[activeKeys[i]]['obj'] = keyObj;
-            const transform = keyObj.getAttribute("transform").split(",");
-            const keyX = Number(transform[0].split("(")[1]);
-            const keyY = Number(transform[1].split(")")[0]);
-            this.keys[activeKeys[i]]['pos'] = {
-                x: keyX,
-                y: keyY
+            if(activeKeys[i].length === 1){
+                const transform = keyObj.getAttribute("transform").split(",");
+                const keyX = Number(transform[0].split("(")[1]);
+                const keyY = Number(transform[1].split(")")[0]);
+                this.keys[activeKeys[i]]['pos'] = {
+                    x: keyX,
+                    y: keyY
+                }
+            } else {
+                const targetObj = this.typewriter.getElementById(activeKeys[i]+"-target");
+                console.log(targetObj)
+                const keyX = Number(keyObj.getAttribute("x"));
+                const keyY = Number(keyObj.getAttribute("y"));
+                // const keyY = Number(transform[1].split(")")[0]);
+                // this.keys[activeKeys[i]]['pos'] = {
+                //     x: keyX,
+                //     y: keyY
+                // }
             }
+            
             try{
                 const hammerObj = this.typewriter.getElementById(activeKeys[i]+"-hammer");
                 // if(hammerObj){
@@ -55,7 +72,6 @@ class Typewriter{
             const textObj = this.typewriter.getElementById('text'+i).firstChild;
             //remove filler content (not need for code but useful for SVG placement)
             textObj.textContent = "";
-            console.log(textObj);
             textObj.style.fontFamily = "'Special Elite', 'Courier',serif";
             textObj.style.textSize = "12px";
             textObj.style.fill = "black";
@@ -72,23 +88,44 @@ class Typewriter{
         //temp fix until correct way of getting offset can be determined
         this.paperMax = this.paperMin + width * -1;
         this.movableOnType.style.transform = "translate("+this.currentPos+"px,0)";
+        this.startRoutine();
+    }
+    startRoutine = () => {
+        this.autoType("ttype to start");
+    }
+    autoType = (message) => {
+        const messageLen = message.length;
+        let counter = 0;
+        const interval = setInterval(()=>{
+            if(counter < messageLen - 1){
+                counter++;
+                this.type(message[counter]);
+            } else {
+                clearInterval(interval);
+                this.nextPage();
+            }
+        },500)
     }
     type = (key,time) => {
         //MTC use time to play sound
+        this.currentText += key;
+        this.print(this.currentText);
         this.audio.type(time);
         if(this.currentChar - 1 <= this.maxChars){
+            //print key if the end of line hasn't been reached
             this.currentChar += 1;
             this.currentPos -= this.charWidth;
-            this.currentText += key;
             this.depressKey(key);
             this.print(this.currentText);
+            //translate moveable type container to new position
+            this.movableOnType.style.transform = "translate("+this.currentPos+"px,0)";
         } else {
+            //reset line if end of line has been reached
             this.currentChar = 0;
             this.currentPos = this.paperMin;
             this.nextLine();
         }
-        //translate moveable type container to new position
-        this.movableOnType.style.transform = "translate("+this.currentPos+"px,0)";
+        
     }
     depressKey = (key) => {
         key = key.toLowerCase();
@@ -101,7 +138,6 @@ class Typewriter{
             //check for the hammer
             if(this.hammers[key]){
                 hammerObj = this.hammers[key]['obj'];
-                console.log(hammerObj);
                 if(hammerObj){
                     hammerObj.style.opacity = 0;
                 }
@@ -126,7 +162,9 @@ class Typewriter{
         
     }
     nextLine = () => {
+        console.log('net line:',this.currentText)
         this.audio.ding();
+        const textOffset = this.currentPos * this.charWidth;
         this.currentPos = this.paperMin;
         this.movableOnType.style.transform = "translate("+this.currentPos+"px,0)";
         this.paperHeight += .1;
@@ -136,20 +174,19 @@ class Typewriter{
             this.nextPage();
         } else {
             this.currentLine += 1;
-            this.print(this.currentText);
-            this.paper.style.transform = " translate("+0+"px,"+-8*(this.currentLine)+"px)";
+            this.paper.style.transform = "translate(0px,"+-8*(this.currentLine)+"px)";
         }
     }
     nextPage = () => {
+        console.log('next page!');
+        this.audio.zip();
         this.currentLine = 0;
-        this.currentPos = this.paperMin;
-        this.paper.style.transform = " translate("+0+"px,"+-8*(this.currentLine-1)+"px)";
         for(let i = 0; i < this.textLines.length; i++){
             this.textLines[i].textContent = "";
         }
+        this.nextLine();
     }
     tab = (timeSinceLastKeyStroke) => {
-        console.log('tabbbinnnggg');
         this.currentText += "   ";
         this.depressKey('tab');
         this.currentChar += 3;
