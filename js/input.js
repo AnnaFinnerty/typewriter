@@ -20,7 +20,8 @@ class Input{
             'ArrowLeft': this.rerouteKeyVal,
             'ArrowUp': this.rerouteKeyVal,
             'ArrowDown': this.rerouteKeyVal,
-            'Meta': this.rerouteKeyVal
+            'Meta': this.rerouteKeyVal,
+            'CapsLock': this.rerouteKeyVal
         }
         this.shift = false;
         this.awake();
